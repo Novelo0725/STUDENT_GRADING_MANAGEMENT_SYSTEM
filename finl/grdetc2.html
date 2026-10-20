@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class Management Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Playfair Display for "CLASS" header & Inter for body UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            headerBlue: '#2D4B75',
+            headerBg: '#E9EFF6',
+            tabActive: '#2C4A73',
+            tabInactive: '#F1F5F9',
+            tabText: '#627B9B',
+            tableBg: '#FFFFFF',
+            tableBorder: '#E2E8F0',
+            cellText: '#506784',
+            cellValue: '#1E293B',
+            focusBlue: '#2563EB'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom scrollbar matching soft UI tone */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #ffffff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* Cell focus border animation */
+    .term-input:focus {
+      outline: none;
+      box-shadow: inset 0 0 0 2px #2563eb;
+      background-color: #ffffff;
+    }
+
+    /* Custom Sidebar Styles */
+    .sidebar a {
+      width: 100%;
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+    }
+    .sidebar {
+      width: 70px;
+      background-color: #3b4d66;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 100px; 
+      gap: 50px;
+      height: 100%;
+    }
+    .sidebar-icon {
+      width: 100%;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #a4b0be;
+      cursor: pointer;
+    }
+    .sidebar-icon.active, .sidebar-icon:hover, .sidebar a:hover .sidebar-icon {
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .sidebar-icon.logout {
+      margin-top: auto;
+      margin-bottom: 20px;
+    }
+    .sidebar-icon img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    /* Logout Modal Styling */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background: #ffffff;
+        padding: 25px 30px;
+        border-radius: 12px;
+        text-align: center;
+        width: 320px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .modal-content h3 {
+        color: #3b4d66;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+    .modal-content p {
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+    .modal-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .modal-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        border: none;
+    }
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+    }
+    .btn-cancel:hover {
+        background: #e2e8f0;
+    }
+    .btn-confirm {
+        background: #3b4d66;
+        color: #ffffff;
+    }
+    .btn-confirm:hover {
+        background: #2c3a4e;
+    }
+  </style>
+</head>
+<body class="bg-white font-sans antialiased h-screen flex overflow-hidden select-none">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Left Sidebar Navigation -->
+  <aside class="sidebar shrink-0 z-20 shadow-sm">
+    <a href="hometc.html">
+      <div class="sidebar-icon">
+        <img src="Untitled1_20261017225057.png" alt="Home">
+      </div>
+    </a>
+    <a href="grdetc.html">
+      <div class="sidebar-icon active">
+        <img src="Untitled1_20261017233333.png" alt="Grades">
+      </div>
+    </a>
+    <a href="tcprofile.html">
+      <div class="sidebar-icon">
+        <img src="Untitled1_20261017225108.png" alt="Profile">
+      </div>
+    </a>
+    <!-- Updated logout icon with id="logout-btn" to trigger confirmation modal -->
+    <div class="sidebar-icon logout" id="logout-btn" title="Logout">
+      <img src="Untitled1_20261017225136.png" alt="Logout">
+    </div>
+  </aside>
+
+  <!-- Main Content Layout -->
+  <main class="flex-1 flex flex-col h-full overflow-hidden bg-white">
+    
+    <!-- Top Header Bar with Blueish Tinted Background -->
+    <header class="bg-headerBg px-8 py-5 border-b border-slate-200/80 shadow-xs flex items-center">
+      <h1 class="text-3xl md:text-4xl font-serif text-headerBlue font-bold tracking-tight">CLASS</h1>
+    </header>
+
+    <!-- Content Workspace with Clean White Background -->
+    <div class="flex-1 p-6 md:p-8 flex flex-col overflow-hidden bg-white">
+      
+      <!-- Top Section Tabs + Search Bar Row -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-5 shrink-0">
+        
+        <!-- Filter Tabs -->
+      <div class="flex flex-wrap items-center gap-2" id="section-tabs">
+          <button type="button" onclick="window.location.href='grdetc2.html'" class="section-tab active px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold bg-tabActive text-white shadow-xs">
+            12-DELPHI
+          </button>
+          <button type="button" onclick="window.location.href='grdetc3.html'" class="section-tab px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold bg-tabInactive text-tabText hover:bg-slate-200 transition-colors">
+            12-JAVASCRIPT
+          </button>
+          <button type="button" onclick="window.location.href='grdetc.html'" class="section-tab px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold bg-tabInactive text-tabText hover:bg-slate-200 transition-colors">
+            12-KOTLIN
+          </button>
+          <button type="button" onclick="window.location.href='grdetc4.html'" class="section-tab px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold bg-tabInactive text-tabText hover:bg-slate-200 transition-colors">
+            12-MATLAB
+          </button>
+          <button type="button" onclick="window.location.href='grdetc5.html'" class="section-tab px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold bg-tabInactive text-tabText hover:bg-slate-200 transition-colors">
+            12-PHYTON
+          </button>
+          <button type="button" onclick="window.location.href='grdetc6.html'" class="section-tab px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold bg-tabInactive text-tabText hover:bg-slate-200 transition-colors">
+            12-AMD
+          </button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="relative min-w-[240px] max-w-xs">
+          <input 
+            type="text" 
+            id="search-input"
+            oninput="handleSearch(this.value)"
+            placeholder="Search Student" 
+            class="w-full bg-slate-50/50 border border-slate-200 text-slate-700 pl-4 pr-10 py-1.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#3b4d66]/40 focus:bg-white text-xs md:text-sm placeholder-slate-400 shadow-xs"
+          />
+          <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+        </div>
+      </div>
+
+      <!-- Table Card Container -->
+      <div class="flex-1 bg-white border border-tableBorder rounded-sm overflow-hidden flex flex-col shadow-xs">
+        
+        <!-- Table Scroll Container -->
+        <div class="flex-1 overflow-auto">
+          <table class="w-full border-collapse min-w-[768px]">
+            
+            <!-- Table Header with subtle soft header tint -->
+            <thead class="sticky top-0 bg-[#F4F7FA] border-b border-tableBorder text-headerBlue font-semibold text-xs md:text-sm z-10">
+              <tr>
+                <th class="py-3 px-6 text-left w-1/3 border-r border-tableBorder">Learner Reference Number (LRN)</th>
+                <th class="py-3 px-6 text-left w-1/3 border-r border-tableBorder">Student Name</th>
+                <th colspan="3" class="py-1 px-0 text-center">
+                  <div class="text-xs uppercase tracking-wider font-bold py-1 border-b border-tableBorder/80">TERM</div>
+                  <div class="grid grid-cols-3 text-center py-1">
+                    <span class="border-r border-tableBorder">1</span>
+                    <span class="border-r border-tableBorder">2</span>
+                    <span>3</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+
+            <!-- Table Body -->
+            <tbody id="student-table-body" class="divide-y divide-tableBorder text-xs md:text-sm font-medium text-cellText">
+              <!-- Dynamically populated rows -->
+            </tbody>
+
+          </table>
+        </div>
+      </div>
+
+      <!-- Bottom Action Footer Toolbar -->
+      <div class="pt-4 flex justify-end items-center space-x-3 shrink-0">
+        <!-- Request Edit Button -->
+        <button 
+          onclick="handleRequestEdit()" 
+          class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 px-5 py-2 rounded-lg font-semibold text-xs md:text-sm shadow-xs transition-all active:scale-95 flex items-center space-x-1.5">
+          <span>Request Edit</span>
+        </button>
+
+        <!-- Upload Button -->
+        <button 
+          onclick="handleUpload()" 
+          class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 px-5 py-2 rounded-lg font-semibold text-xs md:text-sm shadow-xs transition-all active:scale-95 flex items-center space-x-2">
+          <i class="fa-solid fa-arrow-up-from-bracket text-slate-500 text-xs"></i>
+          <span>Upload</span>
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Logout Confirmation Modal -->
+  <div class="modal-overlay" id="logoutModal">
+      <div class="modal-content">
+          <h3>Ready to Leave?</h3>
+          <p>Are you sure you want to log out of your session?</p>
+          <div class="modal-actions">
+              <button class="modal-btn btn-cancel" id="cancelLogout">Cancel</button>
+              <button class="modal-btn btn-confirm" id="confirmLogout">Log Out</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Initial Master Student Dataset
+    const initialStudents = [
+      { id: 1, lrn: '1367290001', name: 'Amane, Yugi', term1: '', term2: '', term3: '' },
+      { id: 2, lrn: '1367290002', name: 'Apolinario, Juan', term1: '', term2: '', term3: '' },
+      { id: 3, lrn: '1367290003', name: 'Bautista, Colline', term1: '', term2: '', term3: '' },
+      { id: 4, lrn: '1367290004', name: 'Castillo, David', term1: '', term2: '', term3: '' },
+      { id: 5, lrn: '1367290005', name: 'Dela Cruz, Xander', term1: '', term2: '', term3: '' },
+      { id: 6, lrn: '1367290006', name: 'Francisco, Sean', term1: '', term2: '', term3: '' },
+      { id: 7, lrn: '1367290007', name: 'Garcia, Pia', term1: '', term2: '', term3: '' },
+      { id: 8, lrn: '1367290008', name: 'Handayan, John', term1: '', term2: '', term3: '' },
+      { id: 9, lrn: '1367290009', name: 'Reyes, Catherine', term1: '', term2: '', term3: '' },
+      { id: 10, lrn: '1367290010', name: 'Javier, Blaze', term1: '', term2: '', term3: '' },
+      { id: 11, lrn: '1367290011', name: 'Phines, Philip', term1: '', term2: '', term3: '' }
+    ];
+
+    let currentSection = '12-KOTLIN';
+    let searchQuery = '';
+    let studentData = JSON.parse(JSON.stringify(initialStudents));
+
+    // Render Table Rows
+    function renderTable() {
+      const tbody = document.getElementById('student-table-body');
+      tbody.innerHTML = '';
+
+      const filtered = studentData.filter(s => {
+        const query = searchQuery.toLowerCase().trim();
+        return s.name.toLowerCase().includes(query) || s.lrn.includes(query);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="text-center py-12 text-slate-400 font-normal">
+              No student records found matching "${searchQuery}"
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach((s) => {
+        const tr = document.createElement('tr');
+        tr.className = "bg-white hover:bg-slate-50/80 transition-colors";
+
+        tr.innerHTML = `
+          <td class="py-3 px-6 border-r border-tableBorder text-cellText font-mono tracking-tight">${s.lrn}</td>
+          <td class="py-3 px-6 border-r border-tableBorder font-medium text-slate-800">${s.name}</td>
+          <td class="p-0 border-r border-tableBorder text-center w-1/12">
+            <input 
+              type="text" 
+              value="${s.term1}" 
+              data-id="${s.id}" 
+              data-term="term1"
+              onchange="updateTermValue(${s.id}, 'term1', this.value)"
+              class="term-input w-full h-full py-2.5 text-center text-cellValue bg-transparent font-medium" 
+            />
+          </td>
+          <td class="p-0 border-r border-tableBorder text-center w-1/12">
+            <input 
+              type="text" 
+              value="${s.term2}" 
+              data-id="${s.id}" 
+              data-term="term2"
+              onchange="updateTermValue(${s.id}, 'term2', this.value)"
+              class="term-input w-full h-full py-2.5 text-center text-cellValue bg-transparent font-medium" 
+            />
+          </td>
+          <td class="p-0 text-center w-1/12">
+            <input 
+              type="text" 
+              value="${s.term3}" 
+              data-id="${s.id}" 
+              data-term="term3"
+              onchange="updateTermValue(${s.id}, 'term3', this.value)"
+              class="term-input w-full h-full py-2.5 text-center text-cellValue bg-transparent font-medium" 
+            />
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Tab Switching
+    function switchTab(sectionName) {
+      currentSection = sectionName;
+      document.querySelectorAll('.section-tab').forEach(tab => {
+        if (tab.innerText.trim() === sectionName) {
+          tab.className = 'section-tab active px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold bg-tabActive text-white shadow-xs';
+        } else {
+          tab.className = 'section-tab px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold bg-tabInactive text-tabText hover:bg-slate-200 transition-colors';
+        }
+      });
+      showToast(`Switched to section ${sectionName}`, 'info');
+    }
+
+    // Search Filtering
+    function handleSearch(val) {
+      searchQuery = val;
+      renderTable();
+    }
+
+    // Update state for term values
+    function updateTermValue(studentId, termKey, newValue) {
+      const student = studentData.find(s => s.id === studentId);
+      if (student) {
+        student[termKey] = newValue;
+      }
+    }
+
+    // Action Handlers
+    function handleRequestEdit() {
+      showToast('Edit access requested for section ' + currentSection, 'success');
+    }
+
+    function handleUpload() {
+      showToast('Preparing upload batch for ' + currentSection + '...', 'success');
+    }
+
+    // Toast Alert Generator
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      let bg = 'bg-slate-800 text-white';
+      if (type === 'success') bg = 'bg-emerald-700 text-white';
+      if (type === 'warning') bg = 'bg-amber-600 text-white';
+
+      toast.className = `${bg} px-4 py-2.5 rounded-lg shadow-lg text-xs md:text-sm font-medium flex items-center space-x-2 transition-all transform translate-y-2 opacity-0 pointer-events-auto`;
+      toast.innerHTML = `
+        <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-info'}"></i>
+        <span>${message}</span>
+      `;
+
+      container.appendChild(toast);
+
+      // Animate in
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 50);
+
+      // Dismiss
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    // Logout Modal Logic
+    const logoutBtn = document.getElementById('logout-btn');
+    const logoutModal = document.getElementById('logoutModal');
+    const cancelLogout = document.getElementById('cancelLogout');
+    const confirmLogout = document.getElementById('confirmLogout');
+
+    logoutBtn.addEventListener('click', function() {
+        logoutModal.style.display = 'flex';
+    });
+
+    cancelLogout.addEventListener('click', function() {
+        logoutModal.style.display = 'none';
+    });
+
+    confirmLogout.addEventListener('click', function() {
+        window.location.href = 'index.html';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === logoutModal) {
+            logoutModal.style.display = 'none';
+        }
+    });
+
+    // Initialize on page load
+    window.onload = () => {
+      renderTable();
+    };
+  </script>
+</body>
+</html>

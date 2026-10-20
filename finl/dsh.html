@@ -1,0 +1,101 @@
+<html>
+<head>
+    <title>STUDENT GRADING MANAGEMENT SYSTEM</title>
+</head>
+<style>
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  overflow: hidden; 
+}
+
+
+body {
+  background-image: url('carousel-2.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.bg {
+  background-color: rgba(235, 243, 254, 0.5); 
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-around; 
+  align-items: flex-end;                   
+  padding: 0 20px;
+}
+
+.clickable {
+   text-decoration: none; 
+  color: inherit;       
+  display: flex;                
+  flex-direction: column;       
+  justify-content: flex-end;    
+  align-items: center;         
+  height: 100%;               
+  width: 50vw;                  
+  padding: 80px 20px 0 20px;   
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease; 
+}
+.clickable:hover {
+  cursor: pointer;
+  transform: scale(1.03);
+  background-color: rgba(255, 255, 255, 0.35);
+  color: #1d3356; 
+}
+
+h1 {
+  margin: 0 0 15px 0; 
+  font-size: 10vh; 
+  color: #3B557E;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.min, .tc, .st {
+  height: 75vh; 
+  width: auto;
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+<body>
+
+   <div class="bg">
+
+      <a href="loginmin.html" class="clickable">
+         <div class="mins">
+            <h1>Admin</h1>
+            <img src="Untitled3_20261016151034-Picsart-AiImageEnhancer.png" class="min">
+         </div>
+      </a>
+
+      <a href="logintc.html" class="clickable">
+         <div class="tcs">
+            <h1>Teacher</h1>
+            <img src="Untitled3_20261016224558-Picsart-AiImageEnhancer.png" class="tc">
+         </div>
+      </a>
+
+      <a href="loginst.html" class="clickable">
+         <div class="sts">
+            <h1>Student</h1>
+            <img src="Untitled3_20261016151041-Picsart-AiImageEnhancer.png" class="st">
+         </div>
+      </a>
+   </div>
+
+</body>
+</html>

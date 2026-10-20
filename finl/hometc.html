@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #ffffff;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0; 
+        }
+        .sidebar {
+            width: 70px;
+            background-color: #3b4d66;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 100px; 
+            gap: 50px;
+        }
+
+        .sidebar-icon {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #a4b0be;
+            cursor: pointer;
+        }
+
+        .sidebar-icon.active, .sidebar-icon:hover, .sidebar a:hover .sidebar-icon {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar a {
+            width: 100%;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+        }
+
+        .sidebar-icon.logout {
+            margin-top: auto;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-icon img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 30px; 
+            overflow-y: auto;
+            border-right: 1px solid #e1e8ed;
+        }
+        header {
+            height: 80px;
+            width: 100%;
+            text-align: left;
+        }
+        header h1 {
+            color: #2b4c7e;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        header p {
+            color: #636e72;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* Schedule Grid Styling */
+        .schedule-grid-container {
+            margin-top: 10px;
+        }
+        .days-header {
+            display: grid;
+            grid-template-columns: 70px repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .day-pill {
+            background-color: #2b4c7e;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+            padding: 10px 0;
+            border-radius: 12px;
+        }
+        .time-slot-row {
+            display: grid;
+            grid-template-columns: 70px repeat(5, 1fr);
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .time-label {
+            font-size: 11px;
+            color: #95a5a6;
+            font-weight: bold;
+            line-height: 1.3;
+        }
+        .class-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px 4px;
+            text-align: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .class-card .class-name {
+            font-size: 11px;
+            font-weight: bold;
+            color: #475569;
+        }
+        .class-card .room-no {
+            font-size: 9px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+        .special-row {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+            color: #2b4c7e;
+            padding: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        .ping-sidebar {
+            width: 280px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .ping-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2b4c7e;
+            margin-bottom: 15px;
+        }
+        .ping-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 12px;
+            background: #ffffff;
+        }
+        .ping-card-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: #64748b;
+            text-align: center;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+        .ping-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ping-warning-icon {
+            font-size: 24px;
+            color: #facc15;
+            flex-shrink: 0;
+        }
+        .ping-text h4 {
+            font-size: 11px;
+            font-weight: bold;
+            color: #334155;
+        }
+        .ping-text p {
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+        .message-box-section {
+            margin-top: 15px;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 15px;
+        }
+        .message-box-section label {
+            font-size: 10px;
+            color: #94a3b8;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .message-select {
+            width: 100%;
+            font-size: 11px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 6px;
+            background: #f8fafc;
+            color: #475569;
+            margin-bottom: 8px;
+            outline: none;
+        }
+        .message-textarea-wrapper {
+            position: relative;
+        }
+        .message-textarea {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 11px;
+            resize: none;
+            height: 65px;
+            background: #f8fafc;
+            outline: none;
+        }
+        .send-btn {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: #2b4c7e;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .inbox-header img{
+            height: 50px;
+            width: 50px;
+        }
+
+        /* Logout Modal Styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #ffffff;
+            padding: 25px 30px;
+            border-radius: 12px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .modal-content h3 {
+            color: #3b4d66;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .modal-content p {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+        .btn-confirm {
+            background: #3b4d66;
+            color: #ffffff;
+        }
+        .btn-confirm:hover {
+            background: #2c3a4e;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <a href="tchome.html">
+            <div class="sidebar-icon active">
+                <img src="Untitled1_20261017225057.png">
+            </div>
+        </a>
+        <a href="grdetc.html">
+            <div class="sidebar-icon">
+                <img src="Untitled1_20261017233333.png">
+            </div>
+        </a>
+        <a href="tcprofile.html">
+            <div class="sidebar-icon">
+                <img src="Untitled1_20261017225108.png">
+            </div>
+        </a> 
+        <!-- Updated logout icon with id="logout-btn" to trigger confirmation modal -->
+        <div class="sidebar-icon logout" id="logout-btn" title="Logout">
+            <img src="Untitled1_20261017225136.png">
+        </div>
+    </div>
+
+    <div class="main-wrapper">
+    
+        <div class="main-container">
+            <header>
+                <h1>GOOD DAY, MR. KIEL!</h1>
+                <p>Here’s your class schedule for the week</p>
+            </header>
+
+            <div class="schedule-grid-container">
+    
+                <div class="days-header">
+                    <div></div>
+                    <div class="day-pill">MON</div>
+                    <div class="day-pill">TUE</div>
+                    <div class="day-pill">WED</div>
+                    <div class="day-pill">THU</div>
+                    <div class="day-pill">FRI</div>
+                </div>
+
+                <div class="time-slot-row">
+                    <div class="time-label">7:00AM<br>8:00AM</div>
+                    <div class="class-card">
+                        <div class="class-name">12-KOTLIN</div>
+                        <div class="room-no">Room 42</div>
+                    </div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div class="class-card">
+                        <div class="class-name">12-PHYTON</div>
+                        <div class="room-no">Room 45</div>
+                    </div>
+                </div>
+
+                <div class="time-slot-row">
+                    <div class="time-label">8:00AM<br>9:00AM</div>
+                    <div></div>
+                    <div></div>
+                    <div class="class-card">
+                        <div class="class-name">12-KOTLIN</div>
+                        <div class="room-no">Room 42</div>
+                    </div>
+                    <div></div>
+                    <div></div>
+                </div>
+
+                <div class="time-slot-row">
+                    <div class="time-label">9:00AM<br>9:30AM</div>
+                    <div style="grid-column: span 5;" class="special-row">BREAK</div>
+                </div>
+
+                <div class="time-slot-row">
+                    <div class="time-label">9:30AM<br>10:30AM</div>
+                    <div class="class-card">
+                        <div class="class-name">12-DELPHI</div>
+                        <div class="room-no">Room 40</div>
+                    </div>
+                    <div class="class-card">
+                        <div class="class-name">12-JAVASCRIPT</div>
+                        <div class="room-no">Room 41</div>
+                    </div>
+                    <div></div>
+                    <div class="class-card">
+                        <div class="class-name">12-AMD</div>
+                        <div class="room-no">Room 46</div>
+                    </div>
+                    <div></div>
+                </div>
+
+                <div class="time-slot-row">
+                    <div class="time-label">10:30AM<br>11:30AM</div>
+                    <div></div>
+                    <div></div>
+                    <div class="class-card">
+                        <div class="class-name">12-MATLAB</div>
+                        <div class="room-no">Room 44</div>
+                    </div>
+                    <div></div>
+                    <div class="class-card">
+                        <div class="class-name">12-AMD</div>
+                        <div class="room-no">Room 46</div>
+                    </div>
+                </div>
+
+                <div class="time-slot-row">
+                    <div class="time-label">11:30AM<br>12:00PM</div>
+                    <div style="grid-column: span 5;" class="special-row">LUNCH TIME</div>
+                </div>
+
+                <div class="time-slot-row">
+                    <div class="time-label">12:00PM<br>1:00PM</div>
+                    <div></div>
+                    <div class="class-card">
+                        <div class="class-name">12-PHYTON</div>
+                        <div class="room-no">Room 45</div>
+                    </div>
+                    <div></div>
+                    <div class="class-card">
+                        <div class="class-name">12-JAVASCRIPT</div>
+                        <div class="room-no">Room 41</div>
+                    </div>
+                    <div></div>
+                </div>
+
+                <div class="time-slot-row">
+                    <div class="time-label">1:00PM<br>2:00PM</div>
+                    <div class="class-card">
+                        <div class="class-name">12-MATLAB</div>
+                        <div class="room-no">Room 44</div>
+                    </div>
+                    <div></div>
+                    <div class="class-card">
+                        <div class="class-name">12-DELPHI</div>
+                        <div class="room-no">Room 50</div>
+                    </div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ping-sidebar">
+            <div>
+                <div class="ping-header">
+                    <i class="fa-regular fa-bell"></i> Ping
+                </div>
+
+                <div class="ping-card">
+                    <div class="ping-card-title">12-Kotlin</div>
+                    <div class="ping-content">
+                        <i class="fa-solid fa-triangle-exclamation ping-warning-icon"></i>
+                        <div class="ping-text">
+                            <h4>General Science Final</h4>
+                            <p>Project Due: Oct 17, 2026</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ping-card">
+                    <div class="ping-card-title">12-Delphi</div>
+                    <div class="ping-content">
+                        <i class="fa-solid fa-triangle-exclamation ping-warning-icon"></i>
+                        <div class="ping-text">
+                            <h4>General Science Final</h4>
+                            <p>Project Due: Oct 17, 2026</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ping-card">
+                    <div class="ping-card-title">12-AMD</div>
+                    <div class="ping-content">
+                        <i class="fa-solid fa-triangle-exclamation ping-warning-icon"></i>
+                        <div class="ping-text">
+                            <h4>General Science Final</h4>
+                            <p>Project Due: Oct 17, 2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="message-box-section">
+                <label>To: 12-Kotlin</label>
+                <select class="message-select">
+                    <option>12-Kotlin</option>
+                    <option>12-Delphi</option>
+                    <option>12-AMD</option>
+                </select>
+                <div class="message-textarea-wrapper">
+                    <textarea class="message-textarea" placeholder="Type a message..."></textarea>
+                    <button class="send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-content">
+            <h3>Ready to Leave?</h3>
+            <p>Are you sure you want to log out of your session?</p>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" id="cancelLogout">Cancel</button>
+                <button class="modal-btn btn-confirm" id="confirmLogout">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to Handle Confirmation Modal and Redirection -->
+    <script>
+        const logoutBtn = document.getElementById('logout-btn');
+        const logoutModal = document.getElementById('logoutModal');
+        const cancelLogout = document.getElementById('cancelLogout');
+        const confirmLogout = document.getElementById('confirmLogout');
+
+        logoutBtn.addEventListener('click', function() {
+            logoutModal.style.display = 'flex';
+        });
+
+        cancelLogout.addEventListener('click', function() {
+            logoutModal.style.display = 'none';
+        });
+
+        confirmLogout.addEventListener('click', function() {
+            window.location.href = 'dsh.html';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === logoutModal) {
+                logoutModal.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>

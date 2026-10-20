@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade Management Dashboard</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    .serif-title {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    /* Custom Color Palette to match exact screenshot tone */
+    .bg-sidebar {
+      background-color: #3b537c;
+    }
+    .bg-banner {
+      background-color: #edf2f7;
+    }
+    .text-title {
+      color: #3b537c;
+    }
+
+    /* Button Tones matching screenshot */
+    .btn-class-files {
+      background-color: #589bff;
+    }
+    .btn-class-files:hover {
+      background-color: #3b82f6;
+    }
+
+    .btn-status {
+      background-color: #ff8c32;
+    }
+    .btn-status:hover {
+      background-color: #ea580c;
+    }
+
+    .btn-print {
+      background-color: #ffcc00;
+    }
+    .btn-print:hover {
+      background-color: #eab308;
+    }
+
+    /* Input focus resets */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Print styles */
+    @media print {
+      aside, header, .header-action-btn, .no-print {
+        display: none !important;
+      }
+      body, main, div {
+        background: white !important;
+        overflow: visible !important;
+      }
+      table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+      }
+      th, td {
+        border: 1px solid #cbd5e1 !important;
+        padding: 8px !important;
+      }
+      input {
+        border: none !important;
+        background: transparent !important;
+      }
+    }
+    .sidebar a {
+        width: 100%;
+        text-decoration: none;
+        display: flex;
+        justify-content: center;
+    }
+    .sidebar {
+        width: 70px;
+        background-color: #3b4d66;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 100px; 
+        gap: 50px;
+        height: 100vh;
+        flex-shrink: 0;
+        z-index: 20;
+    }
+
+    .sidebar-icon {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #a4b0be;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-icon.active, .sidebar-icon:hover, .sidebar a:hover .sidebar-icon {
+        color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    .sidebar-icon.logout {
+        margin-top: auto;
+        margin-bottom: 20px;
+    }
+
+    .sidebar-icon img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+    }
+
+    /* Logout Modal Custom Styling */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background: #ffffff;
+        padding: 25px 30px;
+        border-radius: 12px;
+        text-align: center;
+        width: 320px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .modal-content h3 {
+        color: #3b4d66;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+    .modal-content p {
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+    .modal-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .modal-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        border: none;
+    }
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+    }
+    .btn-cancel:hover {
+        background: #e2e8f0;
+    }
+    .btn-confirm {
+        background: #3b4d66;
+        color: #ffffff;
+    }
+    .btn-confirm:hover {
+        background: #2c3a4e;
+    }
+  </style>
+</head>
+<body class="h-screen w-screen bg-white flex overflow-hidden">
+
+  <!-- LEFT VERTICAL SIDEBAR -->
+  <div class="sidebar">
+    <a href="admindsh.html">
+      <div class="sidebar-icon">
+        <img src="Untitled1_20261017225057.png" alt="Home">
+      </div>
+    </a>
+    <a href="STUDENT.html">
+      <div class="sidebar-icon">
+        <img src="Untitled5_20261019223757.png" alt="Students">
+      </div>
+    </a>
+    <a href="teacher.html">
+      <div class="sidebar-icon">
+        <img src="Untitled5_20261019223806.png" alt="Teachers">
+      </div>
+    </a>
+    <a href="grdemanage.html">
+      <div class="sidebar-icon active">
+        <img src="Untitled1_20261017225103.png" alt="Grades">
+      </div>
+    </a>
+    <!-- Logout Button with id="logout-btn" -->
+    <div class="sidebar-icon logout" id="logout-btn" title="Logout">
+      <img src="Untitled1_20261017225136.png" alt="Logout">
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 flex flex-col h-full overflow-y-auto bg-white">
+
+    <!-- TABLE AREA CONTAINER -->
+    <div class="p-6 md:p-8 max-w-[1440px] w-full mx-auto bg-white">
+
+      <div class="overflow-x-auto border border-slate-200/90 rounded-sm">
+        <table class="w-full text-left border-collapse min-w-[980px]">
+          <thead>
+            <!-- HEADER ROW -->
+            <tr class="bg-banner text-[#3b537c] font-bold text-sm text-center border-b border-slate-300">
+              
+              <!-- Column 1: LRN -->
+              <th class="py-5 px-4 w-[22%] border-r border-slate-200/90 font-semibold text-slate-700 text-sm align-middle">
+                Learner Reference Number<br>
+                <span class="font-medium text-xs text-slate-500">(LRN)</span>
+              </th>
+
+              <!-- Column 2: Student List -->
+              <th class="py-5 px-4 w-[22%] border-r border-slate-200/90 font-semibold text-slate-700 text-sm align-middle">
+                Student List
+              </th>
+
+              <!-- Column 3: Term 1 -->
+              <th class="py-3 px-3 w-[14%] border-r border-slate-200/90 align-top">
+                <div class="font-bold text-base text-[#3b537c] mb-2">Term 1</div>
+                <div class="flex flex-col gap-1 px-1">
+                  <button onclick="openClassFiles('Term 1')" class="header-action-btn btn-class-files text-white text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Class Files</button>
+                  <button onclick="openStatusModal('Term 1')" class="header-action-btn btn-status text-white text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Status</button>
+                  <button onclick="printTermReport('Term 1')" class="header-action-btn btn-print text-slate-900 text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Print</button>
+                </div>
+              </th>
+
+              <!-- Column 4: Term 2 -->
+              <th class="py-3 px-3 w-[14%] border-r border-slate-200/90 align-top">
+                <div class="font-bold text-base text-[#3b537c] mb-2">Term 2</div>
+                <div class="flex flex-col gap-1 px-1">
+                  <button onclick="openClassFiles('Term 2')" class="header-action-btn btn-class-files text-white text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Class Files</button>
+                  <button onclick="openStatusModal('Term 2')" class="header-action-btn btn-status text-white text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Status</button>
+                  <button onclick="printTermReport('Term 2')" class="header-action-btn btn-print text-slate-900 text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Print</button>
+                </div>
+              </th>
+
+              <!-- Column 5: Term 3 -->
+              <th class="py-3 px-3 w-[14%] border-r border-slate-200/90 align-top">
+                <div class="font-bold text-base text-[#3b537c] mb-2">Term 3</div>
+                <div class="flex flex-col gap-1 px-1">
+                  <button onclick="openClassFiles('Term 3')" class="header-action-btn btn-class-files text-white text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Class Files</button>
+                  <button onclick="openStatusModal('Term 3')" class="header-action-btn btn-status text-white text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Status</button>
+                  <button onclick="printTermReport('Term 3')" class="header-action-btn btn-print text-slate-900 text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Print</button>
+                </div>
+              </th>
+
+              <!-- Column 6: Final Grade -->
+              <th class="py-3 px-3 w-[14%] align-top">
+                <div class="font-bold text-base text-[#3b537c] mb-2">Final Grade</div>
+                <div class="flex flex-col gap-1 px-1">
+                  <button onclick="openClassFiles('Final Grade Summary')" class="header-action-btn btn-class-files text-white text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Class Files</button>
+                  <button onclick="openStatusModal('Final Grade Status')" class="header-action-btn btn-status text-white text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Status</button>
+                  <button onclick="window.print()" class="header-action-btn btn-print text-slate-900 text-[11px] font-medium py-1 px-2 rounded transition-colors shadow-2xs">Print</button>
+                </div>
+              </th>
+
+            </tr>
+          </thead>
+
+          <tbody id="grade-table-body" class="divide-y divide-slate-200 text-slate-700 text-sm bg-white">
+            <!-- Student Row 1 -->
+            <tr class="hover:bg-slate-50/80 transition-colors h-14">
+              <td class="py-3 px-4 text-center text-slate-600 border-r border-slate-200">1367290023</td>
+              <td class="py-3 px-4 text-left font-normal text-slate-700 border-r border-slate-200 pl-6">Abbott, Amelia</td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center font-bold text-[#3b537c] final-grade-cell bg-slate-50/30">
+                --
+              </td>
+            </tr>
+
+            <!-- Student Row 2 -->
+            <tr class="hover:bg-slate-50/80 transition-colors h-14">
+              <td class="py-3 px-4 text-center text-slate-600 border-r border-slate-200">1367290024</td>
+              <td class="py-3 px-4 text-left font-normal text-slate-700 border-r border-slate-200 pl-6">Baker, Bailey</td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center font-bold text-[#3b537c] final-grade-cell bg-slate-50/30">
+                --
+              </td>
+            </tr>
+
+            <!-- Student Row 3 -->
+            <tr class="hover:bg-slate-50/80 transition-colors h-14">
+              <td class="py-3 px-4 text-center text-slate-600 border-r border-slate-200">1367290025</td>
+              <td class="py-3 px-4 text-left font-normal text-slate-700 border-r border-slate-200 pl-6">Clark, Caleb</td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center font-bold text-[#3b537c] final-grade-cell bg-slate-50/30">
+                --
+              </td>
+            </tr>
+
+            <!-- Student Row 4 -->
+            <tr class="hover:bg-slate-50/80 transition-colors h-14">
+              <td class="py-3 px-4 text-center text-slate-600 border-r border-slate-200">1367290026</td>
+              <td class="py-3 px-4 text-left font-normal text-slate-700 border-r border-slate-200 pl-6">Owens, Oaklynn</td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center font-bold text-[#3b537c] final-grade-cell bg-slate-50/30">
+                --
+              </td>
+            </tr>
+
+            <!-- Student Row 5 -->
+            <tr class="hover:bg-slate-50/80 transition-colors h-14">
+              <td class="py-3 px-4 text-center text-slate-600 border-r border-slate-200">1367290027</td>
+              <td class="py-3 px-4 text-left font-normal text-slate-700 border-r border-slate-200 pl-6">Quinn, Qadir</td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center font-bold text-[#3b537c] final-grade-cell bg-slate-50/30">
+                --
+              </td>
+            </tr>
+
+            <!-- Student Row 6 -->
+            <tr class="hover:bg-slate-50/80 transition-colors h-14">
+              <td class="py-3 px-4 text-center text-slate-600 border-r border-slate-200">1367290028</td>
+              <td class="py-3 px-4 text-left font-normal text-slate-700 border-r border-slate-200 pl-6">Taylor, Talia</td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center font-bold text-[#3b537c] final-grade-cell bg-slate-50/30">
+                --
+              </td>
+            </tr>
+
+            <!-- Student Row 7 -->
+            <tr class="hover:bg-slate-50/80 transition-colors h-14">
+              <td class="py-3 px-4 text-center text-slate-600 border-r border-slate-200">1367290029</td>
+              <td class="py-3 px-4 text-left font-normal text-slate-700 border-r border-slate-200 pl-6">Vargas, Valentina</td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center border-r border-slate-200">
+                <input type="number" min="0" max="100" placeholder="--" class="grade-input w-full text-center py-1.5 focus:outline-none focus:bg-blue-50/60 rounded text-slate-700" oninput="calculateRow(this)">
+              </td>
+              <td class="py-2 px-2 text-center font-bold text-[#3b537c] final-grade-cell bg-slate-50/30">
+                --
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- CLASS FILES MODAL -->
+  <div id="class-files-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 border border-slate-200">
+      <div class="flex items-center justify-between mb-4 border-b pb-3">
+        <h3 class="text-base font-bold text-[#3b537c]" id="modal-term-title">Class Files - Term 1</h3>
+        <button onclick="closeModal('class-files-modal')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 mb-6">
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-md flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <i data-lucide="file-text" class="w-4 h-4 text-[#589bff]"></i>
+            <span class="font-medium text-slate-700">Term_Syllabus.pdf</span>
+          </div>
+          <button onclick="showToast('Downloading syllabus...')" class="text-[#589bff] font-semibold hover:underline">Download</button>
+        </div>
+
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-md flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i>
+            <span class="font-medium text-slate-700">Grades_Masterlist.xlsx</span>
+          </div>
+          <button onclick="showToast('Downloading spreadsheet...')" class="text-[#589bff] font-semibold hover:underline">Download</button>
+        </div>
+
+        <div class="border-2 border-dashed border-slate-300 rounded-md p-4 text-center hover:bg-slate-50 transition-colors cursor-pointer" onclick="showToast('File selection window opened')">
+          <i data-lucide="upload-cloud" class="w-6 h-6 text-slate-400 mx-auto mb-1"></i>
+          <p class="text-xs text-slate-600 font-medium">Click to upload class documents</p>
+          <p class="text-[10px] text-slate-400">PDF, XLSX, DOCX up to 10MB</p>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button onclick="closeModal('class-files-modal')" class="px-4 py-1.5 text-xs font-semibold bg-[#3b537c] text-white rounded hover:bg-[#2c3f5e]">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS MODAL -->
+  <div id="status-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-sm w-full p-6 border border-slate-200">
+      <div class="flex items-center justify-between mb-4 border-b pb-3">
+        <h3 class="text-base font-bold text-[#3b537c]" id="status-modal-title">Status Summary</h3>
+        <button onclick="closeModal('status-modal')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+          <span class="text-slate-600">Completion Status:</span>
+          <span class="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">All Grades Encoded</span>
+        </div>
+        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+          <span class="text-slate-600">Total Students:</span>
+          <span class="font-bold text-slate-800">7 Learners</span>
+        </div>
+        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+          <span class="text-slate-600">Verification:</span>
+          <span class="font-bold text-[#ff8c32] bg-orange-50 px-2 py-0.5 rounded">Pending Approval</span>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-6">
+        <button onclick="closeModal('status-modal')" class="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded">Cancel</button>
+        <button onclick="submitStatus(); closeModal('status-modal')" class="px-4 py-1.5 text-xs font-semibold bg-[#ff8c32] text-white rounded hover:bg-[#e07525]">Confirm & Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGOUT CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="logoutModal">
+      <div class="modal-content">
+          <h3>Ready to Leave?</h3>
+          <p>Are you sure you want to log out of your session?</p>
+          <div class="modal-actions">
+              <button class="modal-btn btn-cancel" id="cancelLogout">Cancel</button>
+              <button class="modal-btn btn-confirm" id="confirmLogout">Log Out</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-3 rounded-lg shadow-xl opacity-0 translate-y-4 pointer-events-none z-50 transition-all duration-300">
+    <span id="toast-message">Action processed</span>
+  </div>
+
+  <script>
+    // Initialize Icons
+    lucide.createIcons();
+
+    // Dynamically calculate average row score
+    function calculateRow(input) {
+      const row = input.closest('tr');
+      const inputs = row.querySelectorAll('.grade-input');
+      let sum = 0;
+      let count = 0;
+
+      inputs.forEach(inp => {
+        const val = parseFloat(inp.value);
+        if (!isNaN(val)) {
+          sum += val;
+          count++;
+        }
+      });
+
+      const finalCell = row.querySelector('.final-grade-cell');
+      if (count > 0) {
+        const avg = (sum / count).toFixed(1);
+        finalCell.textContent = avg;
+      } else {
+        finalCell.textContent = '--';
+      }
+    }
+
+    // Modal Handlers
+    function openClassFiles(term) {
+      document.getElementById('modal-term-title').textContent = `Class Files - ${term}`;
+      document.getElementById('class-files-modal').classList.remove('hidden');
+    }
+
+    function openStatusModal(term) {
+      document.getElementById('status-modal-title').textContent = `Status Report - ${term}`;
+      document.getElementById('status-modal').classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function printTermReport(term) {
+      showToast(`Preparing print view for ${term}...`);
+      setTimeout(() => {
+        window.print();
+      }, 350);
+    }
+
+    function saveAllGrades() {
+      showToast("Grades successfully saved!");
+    }
+
+    function submitStatus() {
+      showToast("Term status update submitted!");
+    }
+
+    // Logout Confirmation Modal Logic
+    const logoutBtn = document.getElementById('logout-btn');
+    const logoutModal = document.getElementById('logoutModal');
+    const cancelLogout = document.getElementById('cancelLogout');
+    const confirmLogout = document.getElementById('confirmLogout');
+
+    logoutBtn.addEventListener('click', function() {
+        logoutModal.style.display = 'flex';
+    });
+
+    cancelLogout.addEventListener('click', function() {
+        logoutModal.style.display = 'none';
+    });
+
+    confirmLogout.addEventListener('click', function() {
+        window.location.href = 'dsh.html';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === logoutModal) {
+            logoutModal.style.display = 'none';
+        }
+    });
+
+    // Toast helper
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = msg;
+      
+      toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>

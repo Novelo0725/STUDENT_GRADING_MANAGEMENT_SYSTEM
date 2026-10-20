@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Progress and Achievement</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .sidebar a {
+            width: 100%;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+        }
+        .sidebar {
+            width: 70px;
+            background-color: #3b4d66;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 100px; 
+            gap: 50px;
+        }
+
+        .sidebar-icon {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #a4b0be;
+            cursor: pointer;
+        }
+
+        .sidebar-icon.active, .sidebar-icon:hover, .sidebar a:hover .sidebar-icon {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-icon.logout {
+            margin-top: auto;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-icon img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 25px 30px; 
+            overflow-y: auto;
+            background-color: #f4f7fa;
+        }
+
+        .page-title {
+            color: #3b4d66;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border: 1px solid #3b4d66;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .grades-table th, .grades-table td {
+            border: 1px solid #b0c4de;
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        .grades-table th {
+            background-color: #3b4d66;
+            color: #ffffff;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .grades-table th.text-center {
+            text-align: center;
+        }
+
+        .section-header {
+            background-color: #eaeef3;
+            font-weight: bold;
+            color: #3b4d66;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        /* Performance Descriptors Table */
+        .descriptors-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border: 1px solid #3b4d66;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .descriptors-table th, .descriptors-table td {
+            border: 1px solid #b0c4de;
+            padding: 6px;
+        }
+
+        .descriptors-table th {
+            background-color: #3b4d66;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        /* Logout Modal Styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #ffffff;
+            padding: 25px 30px;
+            border-radius: 12px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .modal-content h3 {
+            color: #3b4d66;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .modal-content p {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+        .btn-confirm {
+            background: #3b4d66;
+            color: #ffffff;
+        }
+        .btn-confirm:hover {
+            background: #2c3a4e;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <a href="homest.html">
+            <div class="sidebar-icon">
+                <img src="Untitled1_20261017225057.png">
+            </div>
+        </a>
+        <a href="grdest.html">
+            <div class="sidebar-icon active">
+                <img src="Untitled1_20261017225103.png">
+            </div>
+        </a>
+        <a href="stprofile.html">
+            <div class="sidebar-icon">
+                <img src="Untitled1_20261017225108.png">
+            </div>
+        </a>
+        <!-- Updated logout icon with id="logout-btn" to trigger confirmation modal -->
+        <div class="sidebar-icon logout" id="logout-btn" title="Logout">
+            <img src="Untitled1_20261017225136.png">
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="page-title">PROGRESS AND ACHIEVEMENT</div>
+
+        <!-- Main Grades Table -->
+        <table class="grades-table">
+            <thead>
+                <tr>
+                    <th style="width: 35%;">Learning Areas</th>
+                    <th style="width: 25%;">Teacher</th>
+                    <th colspan="3" class="text-center" style="width: 18%;">TERM</th>
+                    <th style="width: 11%;" class="text-center">Final Grade</th>
+                    <th style="width: 11%;" class="text-center">Remarks</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th class="text-center" style="width: 6%;">1</th>
+                    <th class="text-center" style="width: 6%;">2</th>
+                    <th class="text-center" style="width: 6%;">3</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr class="section-header">
+                    <td colspan="7">Core Subjects</td>
+                </tr>
+                <tr>
+                    <td>Effective Communication</td>
+                    <td></td>
+                    <td></td><td></td><td></td>
+                    <td></td><td></td>
+                </tr>
+                <tr>
+                    <td>Mabisang Komunikasyon</td>
+                    <td></td>
+                    <td></td><td></td><td></td>
+                    <td></td><td></td>
+                </tr>
+                <tr>
+                    <td>General Mathematics</td>
+                    <td></td>
+                    <td></td><td></td><td></td>
+                    <td></td><td></td>
+                </tr>
+                <tr>
+                    <td>General Science</td>
+                    <td></td>
+                    <td></td><td></td><td></td>
+                    <td></td><td></td>
+                </tr>
+                <tr>
+                    <td>Life and Career Skills</td>
+                    <td></td>
+                    <td></td><td></td><td></td>
+                    <td></td><td></td>
+                </tr>
+                <tr>
+                    <td>Pag-aaral ng kasaysayan at Lipunang Pilipino</td>
+                    <td></td>
+                    <td></td><td></td><td></td>
+                    <td></td><td></td>
+                </tr>
+
+                <tr class="section-header">
+                    <td colspan="7">Elective Subjects</td>
+                </tr>
+                <tr>
+                    <td>Academic Elective 1</td>
+                    <td></td>
+                    <td></td><td></td><td></td>
+                    <td></td><td></td>
+                </tr>
+                <tr>
+                    <td>Academic Elective 2</td>
+                    <td></td>
+                    <td></td><td></td><td></td>
+                    <td></td><td></td>
+                </tr>
+                <tr>
+                    <td>Academic Elective 3</td>
+                    <td></td>
+                    <td></td><td></td><td></td>
+                    <td></td><td></td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" class="text-right" style="font-weight: bold; color: #3b4d66;">General Average:</td>
+                    <td></td><td></td><td></td>
+                    <td></td><td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="descriptors-table">
+            <thead>
+                <tr>
+                    <th colspan="10">PERFORMANCE DESCRIPTORS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="font-weight: bold; width: 10%;">90-100</td>
+                    <td style="width: 10%;">Advancing</td>
+                    <td style="font-weight: bold; width: 10%;">80-89</td>
+                    <td style="width: 10%;">Benchmarking</td>
+                    <td style="font-weight: bold; width: 10%;">75-79</td>
+                    <td style="width: 10%;">Connecting</td>
+                    <td style="font-weight: bold; width: 10%;">65-74</td>
+                    <td style="width: 10%;">Developing</td>
+                    <td style="font-weight: bold; width: 10%;">0-64</td>
+                    <td style="width: 10%;">Emerging</td>
+                </tr>
+                <tr>
+                    <td colspan="2">Passed</td>
+                    <td colspan="2">Passed</td>
+                    <td colspan="2">Passed</td>
+                    <td colspan="2">Failed</td>
+                    <td colspan="2">Failed</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-content">
+            <h3>Ready to Leave?</h3>
+            <p>Are you sure you want to log out of your session?</p>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" id="cancelLogout">Cancel</button>
+                <button class="modal-btn btn-confirm" id="confirmLogout">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to Handle Confirmation Modal and Redirection -->
+    <script>
+        const logoutBtn = document.getElementById('logout-btn');
+        const logoutModal = document.getElementById('logoutModal');
+        const cancelLogout = document.getElementById('cancelLogout');
+        const confirmLogout = document.getElementById('confirmLogout');
+
+        logoutBtn.addEventListener('click', function() {
+            logoutModal.style.display = 'flex';
+        });
+
+        cancelLogout.addEventListener('click', function() {
+            logoutModal.style.display = 'none';
+        });
+
+        confirmLogout.addEventListener('click', function() {
+            window.location.href = 'index.html';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === logoutModal) {
+                logoutModal.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>

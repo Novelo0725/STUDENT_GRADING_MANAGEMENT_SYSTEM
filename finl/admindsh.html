@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Admin - Dashboard</title>
+ 
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script src="https://unpkg.com/lucide@latest"></script>
+ 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .serif-heading {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+    /* Plain modern sans-serif for numbers */
+    .num-font {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-weight: 400; /* Regular / plain weight */
+    }
+    .bg-sidebar {
+      background-color: #3b537c;
+    }
+    .bg-card-footer {
+      background-color: #3b537c;
+    }
+    .bg-light-blue {
+      background-color: #edf2f7;
+    }
+    /* Toast Alert Styling */
+    #toast {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    /* CUSTOM SIDEBAR STYLES */
+    .sidebar a {
+        width: 100%;
+        text-decoration: none;
+        display: flex;
+        justify-content: center;
+    }
+    .sidebar {
+        width: 70px;
+        background-color: #3b4d66;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 100px; 
+        gap: 50px;
+        height: 100vh;
+        flex-shrink: 0;
+        z-index: 20;
+    }
+
+    .sidebar-icon {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #a4b0be;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-icon.active, .sidebar-icon:hover, .sidebar a:hover .sidebar-icon {
+        color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    .sidebar-icon.logout {
+        margin-top: auto;
+        margin-bottom: 20px;
+    }
+
+    .sidebar-icon img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+    }
+
+    /* Logout Modal Custom Styling */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background: #ffffff;
+        padding: 25px 30px;
+        border-radius: 12px;
+        text-align: center;
+        width: 320px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .modal-content h3 {
+        color: #3b4d66;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+    .modal-content p {
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+    .modal-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .modal-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        border: none;
+    }
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+    }
+    .btn-cancel:hover {
+        background: #e2e8f0;
+    }
+    .btn-confirm {
+        background: #3b4d66;
+        color: #ffffff;
+    }
+    .btn-confirm:hover {
+        background: #2c3a4e;
+    }
+  </style>
+</head>
+<body class="h-screen w-screen bg-white flex overflow-hidden">
+
+  <!-- NEW CUSTOM LEFT SIDEBAR -->
+    <div class="sidebar">
+    <a href="admindsh.html">
+      <div class="sidebar-icon active">
+        <img src="Untitled1_20261017225057.png" alt="Home">
+      </div>
+    </a>
+    <a href="STUDENT.html">
+      <div class="sidebar-icon">
+        <img src="Untitled5_20261019223757.png" alt="Grades">
+      </div>
+    </a>
+    <a href="teacher.html">
+      <div class="sidebar-icon">
+        <img src="Untitled5_20261019223806.png" alt="Profile">
+      </div>
+    </a>
+    <a href="grdemanage.html">
+      <div class="sidebar-icon">
+        <img src="Untitled1_20261017225103.png" alt="Profile">
+      </div>
+    </a>
+    <!-- Logout Button with id="logout-btn" -->
+    <div class="sidebar-icon logout" id="logout-btn" title="Logout">
+      <img src="Untitled1_20261017225136.png" alt="Logout">
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 flex flex-col h-full overflow-y-auto bg-white">
+    
+    <!-- TOP HEADER / BANNER -->
+    <header class="bg-light-blue px-8 pt-8 pb-6 border-b border-slate-300/60 flex-shrink-0 shadow-xs">
+      <h1 class="serif-heading text-3xl md:text-4xl text-[#3b537c] font-bold tracking-wide">
+        GOOD DAY, MR. KIEL!
+      </h1>
+    </header>
+
+    <!-- DASHBOARD BODY CONTENT -->
+    <div class="p-6 md:p-8 space-y-6 max-w-7xl w-full mx-auto bg-white">
+      
+      <!-- DATE SUBHEADER -->
+      <div class="text-xs font-bold tracking-wider text-[#3b537c] uppercase">
+        MONDAY, OCTOBER 19
+      </div>
+
+      <!-- 2x2 STATS CARDS GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- CARD 1: TOTAL STUDENTS -->
+        <div class="rounded-lg border border-slate-300/80 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+          <div class="bg-light-blue p-6 text-right border-b border-slate-300/60">
+            <div class="num-font text-4xl md:text-5xl text-[#3b537c] tracking-tight">10,000</div>
+            <div class="text-xs font-bold text-[#3b537c] tracking-wider uppercase mt-2">TOTAL STUDENTS</div>
+          </div>
+          <button class="w-full bg-card-footer px-5 py-3 text-white flex items-center justify-between hover:bg-[#2e4263] transition-colors group">
+            <span class="text-xs font-bold tracking-wider uppercase">VIEW DETAILS</span>
+            <div class="w-7 h-7 rounded-full border border-white/40 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </div>
+          </button>
+        </div>
+
+        <!-- CARD 2: ACTIVE TEACHERS -->
+        <div class="rounded-lg border border-slate-300/80 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+          <div class="bg-light-blue p-6 text-right border-b border-slate-300/60">
+            <div class="num-font text-4xl md:text-5xl text-[#3b537c] tracking-tight">1,000</div>
+            <div class="text-xs font-bold text-[#3b537c] tracking-wider uppercase mt-2">ACTIVE TEACHERS</div>
+          </div>
+          <button class="w-full bg-card-footer px-5 py-3 text-white flex items-center justify-between hover:bg-[#2e4263] transition-colors group">
+            <span class="text-xs font-bold tracking-wider uppercase">VIEW DETAILS</span>
+            <div class="w-7 h-7 rounded-full border border-white/40 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </div>
+          </button>
+        </div>
+
+        <!-- CARD 3: PENDING APPROVALS -->
+        <div class="rounded-lg border border-slate-300/80 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+          <div class="bg-light-blue p-6 text-right border-b border-slate-300/60">
+            <div class="num-font text-4xl md:text-5xl text-[#3b537c] tracking-tight">800</div>
+            <div class="text-xs font-bold text-[#3b537c] tracking-wider uppercase mt-2">PENDING APPROVALS</div>
+          </div>
+          <button class="w-full bg-card-footer px-5 py-3 text-white flex items-center justify-between hover:bg-[#2e4263] transition-colors group">
+            <span class="text-xs font-bold tracking-wider uppercase">VIEW DETAILS</span>
+            <div class="w-7 h-7 rounded-full border border-white/40 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </div>
+          </button>
+        </div>
+
+        <!-- CARD 4: GRADE UPDATES -->
+        <div class="rounded-lg border border-slate-300/80 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+          <div class="bg-light-blue p-6 text-right border-b border-slate-300/60">
+            <div class="num-font text-4xl md:text-5xl text-[#3b537c] tracking-tight">1,600</div>
+            <div class="text-xs font-bold text-[#3b537c] tracking-wider uppercase mt-2">GRADE UPDATES</div>
+          </div>
+          <button class="w-full bg-card-footer px-5 py-3 text-white flex items-center justify-between hover:bg-[#2e4263] transition-colors group">
+            <span class="text-xs font-bold tracking-wider uppercase">VIEW DETAILS</span>
+            <div class="w-7 h-7 rounded-full border border-white/40 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </div>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- NEW ACCOUNT REQUEST SECTION -->
+      <section class="bg-light-blue border border-slate-300/80 rounded-lg p-5 shadow-sm space-y-4">
+        
+        <!-- SECTION HEADER & SEARCH -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-sm font-bold text-[#3b537c] uppercase tracking-wider">NEW ACCOUNT REQUEST</h2>
+            <p class="text-xs text-slate-500 italic mt-0.5">Review students and teachers waiting to join.</p>
+          </div>
+
+          <!-- WHITE SEARCH BAR -->
+          <div class="relative w-full sm:w-64">
+            <input 
+              type="text" 
+              id="search-input"
+              placeholder="SEARCH"
+              oninput="filterRequests()"
+              class="w-full bg-white text-[#3b537c] text-xs placeholder-slate-400 px-4 py-2 pr-9 rounded-full border border-slate-300 shadow-xs focus:outline-none focus:ring-2 focus:ring-[#3b537c] uppercase tracking-wider font-medium"
+            >
+            <i data-lucide="search" class="w-4 h-4 text-[#3b537c] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+          </div>
+        </div>
+
+        <!-- ACCOUNT REQUEST LIST -->
+        <div id="request-list" class="space-y-3 pt-2">
+          
+          <!-- REQUEST ITEM 1 -->
+          <div class="request-item bg-transparent flex flex-wrap sm:flex-nowrap items-center justify-between p-2 rounded-lg hover:bg-slate-200/50 transition-colors gap-3" data-name="amane yugi student">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-purple-200 text-purple-600 flex items-center justify-center font-bold text-sm border border-purple-300">
+                <i data-lucide="user" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-800">Amane, Yugi</div>
+                <div class="text-[11px] text-slate-500">Grade 12 - LRN 1367290001</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 ml-auto">
+              <span class="bg-[#fef08a] text-slate-700 text-[10px] font-bold px-3 py-1 rounded-full tracking-wider uppercase">STUDENT</span>
+              <button onclick="handleAction('Amane, Yugi', 'rejected', this)" class="w-7 h-7 bg-[#ef4444] hover:bg-red-600 text-white rounded flex items-center justify-center shadow-sm transition-transform active:scale-95" title="Reject">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+              <button onclick="handleAction('Amane, Yugi', 'approved', this)" class="w-7 h-7 bg-[#22c55e] hover:bg-green-600 text-white rounded flex items-center justify-center shadow-sm transition-transform active:scale-95" title="Approve">
+                <i data-lucide="check" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- REQUEST ITEM 2 -->
+          <div class="request-item bg-transparent flex flex-wrap sm:flex-nowrap items-center justify-between p-2 rounded-lg hover:bg-slate-200/50 transition-colors gap-3" data-name="kiel teacher science department">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm border border-amber-300">
+                <i data-lucide="user-check" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-800">Kiel</div>
+                <div class="text-[11px] text-slate-500">Science Department</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 ml-auto">
+              <span class="bg-[#fef08a] text-slate-700 text-[10px] font-bold px-3 py-1 rounded-full tracking-wider uppercase">TEACHER</span>
+              <button onclick="handleAction('Kiel', 'rejected', this)" class="w-7 h-7 bg-[#ef4444] hover:bg-red-600 text-white rounded flex items-center justify-center shadow-sm transition-transform active:scale-95" title="Reject">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+              <button onclick="handleAction('Kiel', 'approved', this)" class="w-7 h-7 bg-[#22c55e] hover:bg-green-600 text-white rounded flex items-center justify-center shadow-sm transition-transform active:scale-95" title="Approve">
+                <i data-lucide="check" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- REQUEST ITEM 3 -->
+          <div class="request-item bg-transparent flex flex-wrap sm:flex-nowrap items-center justify-between p-2 rounded-lg hover:bg-slate-200/50 transition-colors gap-3" data-name="ortiz ocean student">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm border border-emerald-300">
+                <i data-lucide="user" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-800">Ortiz, Ocean</div>
+                <div class="text-[11px] text-slate-500">Grade 12 - LRN 1367290022</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 ml-auto">
+              <span class="bg-[#fef08a] text-slate-700 text-[10px] font-bold px-3 py-1 rounded-full tracking-wider uppercase">STUDENT</span>
+              <button onclick="handleAction('Ortiz, Ocean', 'rejected', this)" class="w-7 h-7 bg-[#ef4444] hover:bg-red-600 text-white rounded flex items-center justify-center shadow-sm transition-transform active:scale-95" title="Reject">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+              <button onclick="handleAction('Ortiz, Ocean', 'approved', this)" class="w-7 h-7 bg-[#22c55e] hover:bg-green-600 text-white rounded flex items-center justify-center shadow-sm transition-transform active:scale-95" title="Approve">
+                <i data-lucide="check" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- EMPTY STATE MESSAGE -->
+        <div id="no-results" class="hidden text-center py-6 text-slate-400 text-xs">
+          No pending account requests found.
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- LOGOUT CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="logoutModal">
+      <div class="modal-content">
+          <h3>Ready to Leave?</h3>
+          <p>Are you sure you want to log out of your session?</p>
+          <div class="modal-actions">
+              <button class="modal-btn btn-cancel" id="cancelLogout">Cancel</button>
+              <button class="modal-btn btn-confirm" id="confirmLogout">Log Out</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-3 rounded-lg shadow-xl opacity-0 translate-y-4 pointer-events-none z-50 flex items-center gap-2">
+    <span id="toast-message">Action processed</span>
+  </div>
+
+  <script>
+    // Render Lucide Icons
+    lucide.createIcons();
+
+    // Handle Approve / Reject request
+    function handleAction(name, action, element) {
+      const row = element.closest('.request-item');
+      
+      row.style.transition = 'all 0.3s ease';
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(20px)';
+      
+      setTimeout(() => {
+        row.remove();
+        checkEmptyList();
+      }, 300);
+
+      showToast(`${name}'s account request was ${action}.`);
+    }
+
+    // Filter requests
+    function filterRequests() {
+      const query = document.getElementById('search-input').value.toLowerCase().trim();
+      const items = document.querySelectorAll('.request-item');
+      let visibleCount = 0;
+
+      items.forEach(item => {
+        const text = item.getAttribute('data-name');
+        if (text.includes(query)) {
+          item.style.display = 'flex';
+          visibleCount++;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+
+      const noResults = document.getElementById('no-results');
+      if (visibleCount === 0) {
+        noResults.classList.remove('hidden');
+      } else {
+        noResults.classList.add('hidden');
+      }
+    }
+
+    function checkEmptyList() {
+      const items = document.querySelectorAll('.request-item');
+      if (items.length === 0) {
+        document.getElementById('no-results').textContent = 'All pending requests have been processed.';
+        document.getElementById('no-results').classList.remove('hidden');
+      }
+    }
+
+    // Logout Confirmation Modal Logic
+    const logoutBtn = document.getElementById('logout-btn');
+    const logoutModal = document.getElementById('logoutModal');
+    const cancelLogout = document.getElementById('cancelLogout');
+    const confirmLogout = document.getElementById('confirmLogout');
+
+    logoutBtn.addEventListener('click', function() {
+        logoutModal.style.display = 'flex';
+    });
+
+    cancelLogout.addEventListener('click', function() {
+        logoutModal.style.display = 'none';
+    });
+
+    confirmLogout.addEventListener('click', function() {
+        window.location.href = 'dsh.html';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === logoutModal) {
+            logoutModal.style.display = 'none';
+        }
+    });
+
+    // Toast functionality
+    let toastTimeout;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      
+      toastMsg.textContent = message;
+      toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

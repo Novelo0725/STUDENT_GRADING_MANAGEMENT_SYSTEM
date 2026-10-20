@@ -1,0 +1,469 @@
+<html>
+<head>
+    <title>Student Dashboard</title>
+</head>
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+body {
+    background-color: #ffffff;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+}
+.sidebar {
+    width: 70px;
+    background-color: #3b4d66;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 100px; 
+    gap: 50px;
+}
+
+.sidebar-icon {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #a4b0be;
+    cursor: pointer;
+}
+
+.sidebar-icon.logout {
+    margin-top: auto;
+    margin-bottom: 20px;
+}
+
+.sidebar-icon img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+.main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 30px; 
+    overflow-y: auto;
+}
+
+header h1 {
+    color: #3b4d66;
+    font-size: 26px;
+    font-family: serif;
+}
+
+header p {
+    color: #636e72;
+    font-size: 14px;
+}
+header {
+    height: 80px;
+    width: 100%;
+    text-align: left ;
+    border-color: #EEF3F8;        
+}
+.dashboard-grid {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+.schedule-section {
+    flex: 2;
+}
+
+.day-tabs {
+    display: flex;
+    gap: 10px;margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.day-tab {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    background-color: #e4e8f0;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #4b6584;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.day-tab.active {
+    background-color: #3b4d66;
+    color: #ffffff;
+}
+.schedule-row {
+    height: 61px;
+    display: flex;
+    background: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 1.5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    overflow: hidden;
+    border: 1px solid #e1e8ed;
+}
+
+.schedule-row.selected {
+    border: 2px solid #3498db;
+}
+
+.time-col {
+    width: 85px;
+    padding: 12px 8px;
+    font-size: 11px;
+    color: #3b4d66;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    border-right: none;
+    background-color: #fafbfc;
+}
+
+.color-bar {
+    width: 6px;
+}
+
+.class-info {
+    padding: 12px 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.class-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #2f3542;
+    margin-bottom: 3px;
+}
+.class-teacher {
+    font-size: 12px;
+    color: #747d8c;
+}
+
+.bar-yellow { background-color: #f1c40f; width: 15px; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+.bar-green { background-color: #2ecc71; width: 15px; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+.bar-pink { background-color: #e84393; width: 15px; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+.bar-red { background-color: #ff4757; width: 15px; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+.bar-teal { background-color: #00cec9; width: 15px; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+.bar-blue { background-color: #0984e3; width: 15px; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+.inbox-section {
+    flex: 1;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid #e1e8ed;
+}
+
+.inbox-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #3b4d66;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.inbox-card {
+    background: #fdfefe;
+    border: 1px solid #e8eeef;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    position: relative;
+    padding-left: 32px;
+}
+.inbox-card p {
+    font-size: 13px;
+    color: #2f3542;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    padding-left: 35px;
+}
+.inbox-card .author {
+    text-align: right;
+    font-size: 13px;
+    color: #57606f;
+    font-weight: bold;
+}
+.inbox-header img{
+    height: 50px;
+    width: 50px;
+}
+.warning-icon {
+    width: 50px; 
+    height: 50px; 
+    object-fit: contain;
+    position: absolute ;
+    left: 5px;
+    top: 30px;
+    font-size: 22px;
+    transform: translateY(-50%);
+}
+.sidebar-icon.active, .sidebar-icon:hover, .sidebar a:hover .sidebar-icon {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.sidebar a {
+    width: 100%;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+}
+
+/* Logout Modal Styling */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal-content {
+    background: #ffffff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    text-align: center;
+    width: 320px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.modal-content h3 {
+    color: #3b4d66;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+.modal-content p {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+.modal-actions {
+    display: flex;
+    gap: 10px;
+}
+.modal-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+.btn-cancel {
+    background: #f1f5f9;
+    color: #475569;
+}
+.btn-cancel:hover {
+    background: #e2e8f0;
+}
+.btn-confirm {
+    background: #3b4d66;
+    color: #ffffff;
+}
+.btn-confirm:hover {
+    background: #2c3a4e;
+}
+</style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <a href="homest2.html">  <div class="sidebar-icon active">
+            <img src="Untitled1_20261017225057.png">
+        </div>
+        </a>
+       <a href="grdest.html"><div class="sidebar-icon">
+            <img src="Untitled1_20261017225103.png">
+        </div>
+    </a>
+         <a href="stprofile.html"><div class="sidebar-icon">
+            <img src="Untitled1_20261017225108.png">
+        </div></a>
+        <!-- Added id="logout-btn" to trigger the custom confirmation modal -->
+        <div class="sidebar-icon logout" id="logout-btn" title="Logout">
+            <img src="Untitled1_20261017225136.png">
+        </div>
+    </div>
+    <div class="main-container">
+        <header>
+            <h1>GOOD DAY, AARON!</h1>
+            <p>Here's your class schedule for the week</p>
+        </header>
+
+        <div class="dashboard-grid">
+            
+            <div class="schedule-section">
+              
+                <div class="day-tabs">
+                    <button class="day-tab" onclick="window.location.href='homest.html';">MON</button>
+                    <button class="day-tab active" onclick="window.location.href='homest2.html';">TUE</button>
+                    <button class="day-tab" onclick="window.location.href='homest3.html';">WED</button>
+                    <button class="day-tab" onclick="window.location.href='homest4.html';">THU</button>
+                    <button class="day-tab" onclick="window.location.href='homest5.html';">FRI</button>
+                </div>
+
+                <div class="schedule-row">
+                    <div class="time-col">7:00AM<br>8:00AM</div>
+                    <div class="color-bar bar-yellow"></div>
+                    <div class="class-info">
+                        <div class="class-title">Mabisang Komunikasyon</div>
+                        <div class="class-teacher">Ms. Rona</div>
+                    </div>
+                </div>
+
+                <div class="schedule-row">
+                    <div class="time-col">8:00AM<br>9:00AM</div>
+                    <div class="color-bar bar-green"></div>
+                    <div class="class-info">
+                        <div class="class-title">Life and Career Skills</div>
+                        <div class="class-teacher">Ms. Diana</div>
+                    </div>
+                </div>
+
+                <div class="schedule-row">
+                    <div class="time-col">9:00AM<br>9:30AM</div>
+                    <div class="color-bar bar-pink"></div>
+                    <div class="class-info">
+                        <div class="class-title">BREAK</div>
+                    </div>
+                </div>
+
+                <div class="schedule-row">
+                    <div class="time-col">9:30AM<br>10:30AM</div>
+                    <div class="color-bar bar-red"></div>
+                    <div class="class-info">
+                        <div class="class-title">Effective Communication</div>
+                        <div class="class-teacher">Mr. Bean</div>
+                    </div>
+                </div>
+
+                <div class="schedule-row">
+                    <div class="time-col">10:30AM<br>11:30AM</div>
+                    <div class="color-bar bar-teal"></div>
+                    <div class="class-info">
+                        <div class="class-title">General Mathematics</div>
+                        <div class="class-teacher">Mr. Kiel</div>
+                    </div>
+                </div>
+
+                <div class="schedule-row">
+                    <div class="time-col">11:30AM<br>12:00PM</div>
+                    <div class="color-bar bar-pink"></div>
+                    <div class="class-info">
+                        <div class="class-title">LUNCH TIME</div>
+                    </div>
+                </div>
+
+                <div class="schedule-row">
+                    <div class="time-col">12:00PM<br>1:00PM</div>
+                    <div class="color-bar bar-teal"></div>
+                    <div class="class-info">
+                        <div class="class-title">General Science</div>
+                        <div class="class-teacher">Mr. Kiel</div>
+                    </div>
+                </div>
+
+                <div class="schedule-row selected">
+                    <div class="time-col">1:00PM<br>2:00PM</div>
+                    <div class="color-bar bar-blue"></div>
+                    <div class="class-info">
+                        <div class="class-title">Academic Elective 1</div>
+                        <div class="class-teacher">Ms. Jane</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="inbox-section">
+                <div class="inbox-header">
+                    <span><img src="Untitled1_20261017224809.png" ></span> Inbox
+                </div>
+                <div class="inbox-card">
+                    <div class="warning-icon"><img src="Untitled1_20261017224839.png" class="warning-icon"></div>
+                    <p>
+                        General Science Final Project Due: Oct 17, 2026
+                    </p>
+                    <div class="author">Mr. Kiel</div>
+                </div>
+
+                <div class="inbox-card">
+                    <div class="warning-icon"><img src="Untitled1_20261017224839.png" class="warning-icon"></div>
+                    <p>
+                        Long Test tomorrow in Effective Communication. Be sure to review your notes.</p>
+                    <div class="author">Mr. Bean</div>
+                </div>
+
+                <div class="inbox-card">
+                    <div class="warning-icon"><img src="Untitled1_20261017224839.png" class="warning-icon"></div>
+                    <p>
+                        Prepare for oral recitation tomorrow in Effective Communication.</p>
+                    <div class="author">Ms. Jane</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-content">
+            <h3>Ready to Leave?</h3>
+            <p>Are you sure you want to log out of your session?</p>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" id="cancelLogout">Cancel</button>
+                <button class="modal-btn btn-confirm" id="confirmLogout">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Handling Logout Modal -->
+    <script>
+        const logoutBtn = document.getElementById('logout-btn');
+        const logoutModal = document.getElementById('logoutModal');
+        const cancelLogout = document.getElementById('cancelLogout');
+        const confirmLogout = document.getElementById('confirmLogout');
+
+        logoutBtn.addEventListener('click', function() {
+            logoutModal.style.display = 'flex';
+        });
+
+        cancelLogout.addEventListener('click', function() {
+            logoutModal.style.display = 'none';
+        });
+
+        confirmLogout.addEventListener('click', function() {
+            window.location.href = 'dsh.html';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === logoutModal) {
+                logoutModal.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>

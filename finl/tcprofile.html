@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Profile</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .profile-title {
+            color: #3b526d;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 25px;
+            max-width: 1100px;
+        }
+
+        .card-left {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 320px;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .avatar-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #eaeaea;
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .teacher-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 5px;
+        }
+
+        .teacher-role {
+            font-size: 12px;
+            color: #777;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        
+        .card-right {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            flex: 1;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .info-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #222;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .info-divider {
+            border: none;
+            border-top: 2px solid #222;
+            margin-bottom: 25px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 30px;
+        }
+
+        .info-group label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .info-group span {
+            font-size: 14px;
+            font-weight: bold;
+            color: #222;
+        }
+
+        .info-group.full-width {
+            grid-column: span 2;
+        }
+
+        .sidebar {
+            width: 70px;
+            background-color: #3b4d66;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 100px; 
+            gap: 50px;
+        }
+
+        .sidebar-icon {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #a4b0be;
+            cursor: pointer;
+        }
+
+        .sidebar-icon.active, .sidebar-icon:hover, .sidebar a:hover .sidebar-icon {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar a {
+            width: 100%;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+        }
+
+        .sidebar-icon.logout {
+            margin-top: auto;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-icon img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        /* Logout Modal Styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #ffffff;
+            padding: 25px 30px;
+            border-radius: 12px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .modal-content h3 {
+            color: #3b526d;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .modal-content p {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+        .btn-confirm {
+            background: #3b526d;
+            color: #ffffff;
+        }
+        .btn-confirm:hover {
+            background: #2a3c50;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <a href="hometc.html">
+            <div class="sidebar-icon">
+                <img src="Untitled1_20261017225057.png" alt="Home">
+            </div>
+        </a>
+        <a href="grdetc.html">
+            <div class="sidebar-icon">
+                <img src="Untitled1_20261017233333.png" alt="Academics">
+            </div>
+        </a>
+        <a href="tcprofile.html">
+            <div class="sidebar-icon active">
+                <img src="Untitled1_20261017225108.png" alt="Profile">
+            </div>
+        </a>
+        <!-- Replaced inline logout action with id="logout-btn" to trigger modal -->
+        <div class="sidebar-icon logout" id="logout-btn" title="Logout">
+            <img src="Untitled1_20261017225136.png" alt="Logout">
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-container">
+        <div class="profile-title">PROFILE</div>
+
+        <div class="content-wrapper">
+
+            <div class="card-left">
+                <div class="avatar-container">
+                    <img src="roverhate-male-1354358_1920(1)-Picsart-BackgroundRemover.png" alt="Mr. Kiel Avatar">
+                </div>
+                <div class="teacher-name">MR. KIEL</div>
+                <div class="teacher-role">TEACHER</div>
+            </div>
+
+            <div class="card-right">
+                <div class="info-header">PERSONAL INFORMATION:</div>
+                <hr class="info-divider">
+
+                <div class="info-grid">
+                    <div class="info-group">
+                        <label>Department/Faculty:</label>
+                        <span>Science</span>
+                    </div>
+                    <div class="info-group">
+                        <label>Gender:</label>
+                        <span>Male</span>
+                    </div>
+
+                    <div class="info-group">
+                        <label>Name:</label>
+                        <span>Kiel</span>
+                    </div>
+                    <div class="info-group">
+                        <label>Date of Birth:</label>
+                        <span>10/25/1958</span>
+                    </div>
+
+                    <div class="info-group">
+                        <label>School Email:</label>
+                        <span>mrkiel@gmail.com</span>
+                    </div>
+                    <div class="info-group">
+                        <label>Contact Number:</label>
+                        <span>09125436791</span>
+                    </div>
+
+                    <div class="info-group full-width">
+                        <label>Employee ID:</label>
+                        <span>000985471</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-content">
+            <h3>Ready to Leave?</h3>
+            <p>Are you sure you want to log out of your session?</p>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" id="cancelLogout">Cancel</button>
+                <button class="modal-btn btn-confirm" id="confirmLogout">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to Handle Confirmation Modal and Redirection -->
+    <script>
+        const logoutBtn = document.getElementById('logout-btn');
+        const logoutModal = document.getElementById('logoutModal');
+        const cancelLogout = document.getElementById('cancelLogout');
+        const confirmLogout = document.getElementById('confirmLogout');
+
+        logoutBtn.addEventListener('click', function() {
+            logoutModal.style.display = 'flex';
+        });
+
+        cancelLogout.addEventListener('click', function() {
+            logoutModal.style.display = 'none';
+        });
+
+        confirmLogout.addEventListener('click', function() {
+            window.location.href = 'dsh.html';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === logoutModal) {
+                logoutModal.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>
